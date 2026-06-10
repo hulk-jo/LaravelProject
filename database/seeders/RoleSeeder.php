@@ -11,19 +11,22 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        // Rolse
-        $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
-        $editorRole = Role::create(['name' => 'editor']);
+        // إنشاء الـ Roles
+        Role::firstOrCreate(['name' => 'admin']);
+        Role::firstOrCreate(['name' => 'user']);
+        Role::firstOrCreate(['name' => 'editor']);
 
-        // Admin User
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-        ]);
+        // إنشاء Admin User
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        // Role Admin
-        $admin->roles()->attach($adminRole);
+        // تعيين Role للـ Admin
+        $adminRole = Role::where('name', 'admin')->first();
+        $admin->roles()->syncWithoutDetaching([$adminRole->id]);
     }
 }
